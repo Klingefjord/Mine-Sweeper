@@ -30,7 +30,7 @@ c.addEventListener("click", function(event){
       let cell = cells[x][y];
       if (cell.x === coordinatesX * 50 && cell.y === coordinatesY * 50) {
         // do what you want with certain cell
-        cell.scream();
+        cell.clickedOn();
       }
     }
   }
@@ -63,6 +63,8 @@ function initCells(cellCount) {
 
 // places mines on random coordinates
 function placeMines(amount, cellCount) {
+
+  // Holder arrays
   let xCoords = [];
   let yCoords = [];
 
@@ -73,16 +75,17 @@ function placeMines(amount, cellCount) {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
+  // Push random values to holder arrays
   for (var i = 0; i < amount; i ++) {
     xCoords.push(getRandomInt(1,cellCount));
     yCoords.push(getRandomInt(1,cellCount));
   }
-  console.log(xCoords, yCoords);
 
+  // console.log(xCoords, yCoords);
   for (var x = 0; x < cells.length; x++) {
     for (var y = 0; y < cells[0].length; y++) {
       if (xCoords.indexOf(x) !== -1 && yCoords.indexOf(y) !== -1) {
-        console.log(cells[x][y]);
+        cells[x][y].mine = true;
       }
     }
   }
