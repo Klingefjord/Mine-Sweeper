@@ -37,33 +37,6 @@ c.addEventListener("click", function(event){
 });
 
 function setup(cellCount, mineCount) {
-  // Initiate cells
-  initCells(cellCount)
-  for (var x = 0; x < cellCount; x++) {
-    cells[x] = new Array();
-    for (var y = 0; y < cellCount; y++) {
-      cells[x][y] = new Cell(x * 50, y * 50);
-    }
-  }
-
-  // Place mines at random locations (number of mines)
-  placeMines(mineCount, cellCount)
-}
-
-setup(cellCount, mineAmount);
-
-function initCells(cellCount) {
-  for (var x = 0; x < cellCount; x++) {
-    cells[x] = new Array();
-    for (var y = 0; y < cellCount; y++) {
-      cells[x][y] = new Cell(x * 50, y * 50);
-    }
-  }
-}
-
-// places mines on random coordinates
-function placeMines(amount, cellCount) {
-
   // Holder arrays
   let xCoords = [];
   let yCoords = [];
@@ -76,16 +49,51 @@ function placeMines(amount, cellCount) {
   }
 
   // Push random values to holder arrays
-  for (var i = 0; i < amount; i ++) {
+  for (var i = 0; i < mineCount; i ++) {
     xCoords.push(getRandomInt(1,cellCount));
     yCoords.push(getRandomInt(1,cellCount));
   }
 
-  // console.log(xCoords, yCoords);
-  for (var x = 0; x < cells.length; x++) {
-    for (var y = 0; y < cells[0].length; y++) {
+  // Initiate cells & palce mines
+  initCells(cellCount, xCoords, yCoords)
+}
+
+setup(cellCount, mineAmount);
+
+function initCells(cellCount, xCoords, yCoords) {
+  for (var x = 0; x < cellCount; x++) {
+
+    // create new outer array
+    cells[x] = new Array();
+    for (var y = 0; y < cellCount; y++) {
+
+      // Create new cell
+      cells[x][y] = new Cell(x * 50, y * 50);
+    }
+  }
+
+  checkMines(cellCount, xCoords, yCoords);
+}
+
+function checkMines(cellCount, xCoords, yCoords) {
+  console.log(xCoords, yCoords);
+  for (var y = 0; y < cellCount; y++) {
+    for (var x = 0; x < cellCount; x++) {
+
+      // check if mines
       if (xCoords.indexOf(x) !== -1 && yCoords.indexOf(y) !== -1) {
         cells[x][y].mine = true;
+
+
+        // TODO: Find a better way to test if cell is undefined
+        if (cells[x][y + 1]) { cells[x][y + 1].number++ };
+        if (cells[x][y - 1]) { cells[x][y-1].number++ };
+        if (cells[x + 1][y]) { cells[x + 1][y].number++ };
+        if (cells[x - 1][y]) { cells[x - 1][y].number++ };
+        if (cells[x + 1][y + 1]) { cells[x + 1][y + 1].number++ };
+        if (cells[x - 1][y - 1]) { cells[x - 1][y - 1].number++ };
+        if (cells[x + 1][y - 1]) { cells[x + 1][y - 1].number++ };
+        if (cells[x - 1][y + 1]) { cells[x - 1][y + 1].number++ };
       }
     }
   }
