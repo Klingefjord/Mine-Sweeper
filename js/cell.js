@@ -8,6 +8,6 @@ function Cell(x, y) {
   ctx.stroke();
 
   this.clickedOn = function() {
-  	console.log("test");
+  	console.log(this.mine);
   }
 }
