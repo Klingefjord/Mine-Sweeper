@@ -7,10 +7,13 @@ var cellSize = width/12;
 
 // These should be made changeable!
 const cellCount = 12;
-const mineAmount = 5;
+const mineAmount = 8;
 
 var cells = [];
 var mines = [];
+
+
+// ============ GAME LOGIC =======================
 
 // Event listener for clicking on the canvas
 c.addEventListener("click", function(event){
@@ -21,8 +24,6 @@ c.addEventListener("click", function(event){
 
   coordinatesX = (x - (x % 50)) / 50; // COORDINATES!
   coordinatesY = (y - (y % 50)) / 50; // COORDINATES!
-
-  console.log(coordinatesX, coordinatesY);
 
   // divide by 12 to find array value
   for (var x = 0; x < cells.length; x++) {
@@ -38,8 +39,7 @@ c.addEventListener("click", function(event){
 
 function setup(cellCount, mineCount) {
   // Holder arrays
-  let xCoords = [];
-  let yCoords = [];
+  let coords = [];
 
   // Random helper function
   function getRandomInt(min, max) {
@@ -50,17 +50,17 @@ function setup(cellCount, mineCount) {
 
   // Push random values to holder arrays
   for (var i = 0; i < mineCount; i ++) {
-    xCoords.push(getRandomInt(1,cellCount));
-    yCoords.push(getRandomInt(1,cellCount));
+    coords.push(
+      [getRandomInt(1,cellCount),
+       getRandomInt(1,cellCount)]
+    );
   }
 
   // Initiate cells & palce mines
-  initCells(cellCount, xCoords, yCoords)
+  initCells(cellCount, coords)
 }
 
-setup(cellCount, mineAmount);
-
-function initCells(cellCount, xCoords, yCoords) {
+function initCells(cellCount, coords) {
   for (var x = 0; x < cellCount; x++) {
 
     // create new outer array
@@ -72,29 +72,57 @@ function initCells(cellCount, xCoords, yCoords) {
     }
   }
 
-  checkMines(cellCount, xCoords, yCoords);
+  checkMines(cellCount, coords);
 }
 
-function checkMines(cellCount, xCoords, yCoords) {
-  console.log(xCoords, yCoords);
+function checkMines(cellCount, coords) {
   for (var y = 0; y < cellCount; y++) {
     for (var x = 0; x < cellCount; x++) {
+      initNeighbours(x, y);
 
       // check if mines
-      if (xCoords.indexOf(x) !== -1 && yCoords.indexOf(y) !== -1) {
-        cells[x][y].mine = true;
-
-
-        // TODO: Find a better way to test if cell is undefined
-        if (cells[x][y + 1]) { cells[x][y + 1].number++ };
-        if (cells[x][y - 1]) { cells[x][y-1].number++ };
-        if (cells[x + 1][y]) { cells[x + 1][y].number++ };
-        if (cells[x - 1][y]) { cells[x - 1][y].number++ };
-        if (cells[x + 1][y + 1]) { cells[x + 1][y + 1].number++ };
-        if (cells[x - 1][y - 1]) { cells[x - 1][y - 1].number++ };
-        if (cells[x + 1][y - 1]) { cells[x + 1][y - 1].number++ };
-        if (cells[x - 1][y + 1]) { cells[x - 1][y + 1].number++ };
-      }
+      coords.forEach(function(cellCoord) {
+        if (cellCoord[0] == x && cellCoord[1] == y) {
+          cells[x][y].mine = true;
+          cells[x][y].neighbours.forEach(function(cell) {
+            cell.number++;
+          });
+        }
+      });
     }
   }
 }
+
+function initNeighbours(x, y) {
+
+  // TODO: Find a better way to test if cell is undefined
+  if (y < cellCount - 1) {
+    cells[x][y].neighbours.push(cells[x][y + 1])
+  };
+  if (y > 0) {
+    cells[x][y].neighbours.push(cells[x][y - 1])
+  };
+  if (x < cellCount - 1) {
+    cells[x][y].neighbours.push(cells[x + 1][y])
+  };
+  if (x > 0) {
+    cells[x][y].neighbours.push(cells[x - 1][y]);
+  };
+  if (x < cellCount - 1 && y < cellCount - 1) {
+    cells[x][y].neighbours.push(cells[x + 1][y + 1]);
+  };
+  if (x > 0 && y > 0) {
+    cells[x][y].neighbours.push(cells[x - 1][y - 1]);
+  };
+  if (x < cellCount - 1 && y > 0) {
+    cells[x][y].neighbours.push(cells[x + 1][y - 1]);
+  };
+  if (x > 0 && y < cellCount - 1) {
+    cells[x][y].neighbours.push(cells[x - 1][y + 1]);
+  };
+}
+
+// ============= BEGIN PROGRAM ====================
+
+setup(cellCount, mineAmount);
+
