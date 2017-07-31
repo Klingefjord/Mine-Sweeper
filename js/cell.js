@@ -3,13 +3,37 @@ function Cell(x, y) {
   this.y = y;
   this.mine = false;
   this.number = 0;
+  this.isRevealed = false;
+  this.neighbours = [];
 
   ctx.rect(x, y, cellSize, cellSize);
   ctx.stroke();
 
-  this.clickedOn = function() {
-  	console.log("test");
+  this.show = function() {
     ctx.font = '20px serif';
-    this.mine ? ctx.fillText("MINE!", this.x + 25, this.y + 20) : ctx.fillText(this.number, this.x + 25, this.y + 20);
+    if (this.number == 0) {
+      ctx.rect(x, y, cellSize, cellSize);
+      ctx.style = "grey";
+    }
+    this.mine ? ctx.fillText("X", this.x + 25, this.y + 20) : ctx.fillText(this.number, this.x + 25, this.y + 20);
+    this.isRevealed = true;
   }
+
+  this.clickedOn = function() {
+    this.show();
+    if (this.number == 0 && !this.mine) {
+      this.flood();
+    }
+  }
+
+  this.flood = function() {
+      this.neighbours.forEach(function(c) {
+        if (!c.mine && !c.isRevealed && c.number == 0) {
+          c.show();
+          c.flood();
+        } else if (!c.mine && !c.isRevealed) {
+          c.show();
+        }
+      });
+   }
 }
