@@ -1,4 +1,5 @@
 function Cell(x, y) {
+  // =========== variables ================
   this.x = x;
   this.y = y;
   this.mine = false;
@@ -8,6 +9,8 @@ function Cell(x, y) {
 
   ctx.rect(x, y, cellSize, cellSize);
   ctx.stroke();
+  
+  // =========== methods ================
 
   this.show = function() {
     ctx.font = '20px serif';
@@ -15,7 +18,12 @@ function Cell(x, y) {
       ctx.rect(x, y, cellSize, cellSize);
       ctx.style = "grey";
     }
-    this.mine ? ctx.fillText("X", this.x + 25, this.y + 20) : ctx.fillText(this.number, this.x + 25, this.y + 20);
+    
+    // if there is a mine, mark it, else, show number
+    this.mine ? 
+      ctx.fillText("X", this.x + 25, this.y + 20) : 
+      ctx.fillText(this.number, this.x + 25, this.y + 20);
+    
     this.isRevealed = true;
   }
 
